@@ -19,43 +19,48 @@
   html attribute
   */
 
-  .option(
-    'parallel', {
+// Command line arguments from yargs
+
+  .option('parallel', {
       alias: 'p',
-      description: 'Number of parallel instances',
+      default: 8,
+      describe: 'Number of parallel instances',
       type: 'number'
     })
-  .option(
-    'sitemap', {
+  .option('sitemap', {
       alias: 'x',
-      description: 'File path to XML sitemap',
+      default: './sitemap.xml'
+      describe: 'File path to XML sitemap',
       type: 'string'
     })
-  .option(
-    'timeout', {
+  .option('timeout', {
       alias: 't',
-      description: 'Default timeout in milliseconds',
+      default: 30000,
+      describe: 'Default timeout in milliseconds',
       type: 'number'
     })
-  .option(
-    'waitfor', {
+  .option('waitfor', {
       alias: 'w',
-      description: 'XML selector for element to wait for',
+      default: '//title',
+      describe: 'XML selector for element to wait for',
       type: 'string'
     })
-  .option(
-    'querys', {
+  .option('querys', {
       alias: 'q',
-      description: 'XML selector for element to wait for',
+      default: '//a[1]',
+      describe: 'XML selector for element to capture',
       type: 'string'
     }) 
-    .option(
-      'attr', {
+    .option('attr', {
         alias: 'a',
-        description: 'HTML attribute value to report',
+        default: 'src',
+        describe: 'HTML attribute value to report',
         type: 'string'
       })
     .argv;
+
+// Set up default argument values where not specified.
+
 
 // read sitemap xml file
 const xmlSiteMap = fs.readFileSync("./sitemap.xml")
