@@ -37,13 +37,13 @@ const argv = yargs
     })
   .option('querys', {
       alias: 'q',
-      default: '//a[1]',
+      default: '//img[1]',
       describe: 'XML selector for element to capture',
       type: 'string'
     }) 
     .option('attrb', {
         alias: 'a',
-        default: 'href',
+        default: 'src',
         describe: 'HTML attribute value to report',
         type: 'string'
       })
@@ -117,8 +117,7 @@ const xmlSiteMap = fs.readFileSync(sitemap)
             let timeStamp = new Date(Date.now()).toUTCString();
             // Get attribute value to report
             if (elHandle.length > 0) {
-              let t = {"attrb": attrb};
-              let txtOut = await page.evaluate(el => el.getAttribute(attrb), elHandle[0]);
+              let txtOut = await page.evaluate((el,a) => el.getAttribute(a), elHandle[0], attrb);
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`)
             } else {
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","","ELEMENT NOT FOUND"`)
