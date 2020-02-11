@@ -18,6 +18,45 @@
   xpath query selector
   html attribute
   */
+
+  .option(
+    'parallel', {
+      alias: 'p',
+      description: 'Number of parallel instances',
+      type: 'number'
+    })
+  .option(
+    'sitemap', {
+      alias: 'x',
+      description: 'File path to XML sitemap',
+      type: 'string'
+    })
+  .option(
+    'timeout', {
+      alias: 't',
+      description: 'Default timeout in milliseconds',
+      type: 'number'
+    })
+  .option(
+    'waitfor', {
+      alias: 'w',
+      description: 'XML selector for element to wait for',
+      type: 'string'
+    })
+  .option(
+    'querys', {
+      alias: 'q',
+      description: 'XML selector for element to wait for',
+      type: 'string'
+    }) 
+    .option(
+      'attr', {
+        alias: 'a',
+        description: 'HTML attribute value to report',
+        type: 'string'
+      })
+    .argv;
+
 // read sitemap xml file
 const xmlSiteMap = fs.readFileSync("./sitemap.xml")
   // convert sitemap to json for easier javascript parsing
