@@ -1,0 +1,30 @@
+{
+  "name": "sitemuppet",
+  "version": "1.0.1",
+  "description": "Basic scraper to retrieve an HTML attribute from web pages, via sitemap.xml. Uses the Puppeteer node jS framework.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nullish/sitemuppet.git"
+  },
+  "keywords": [
+    "nodejs",
+    "web",
+    "scrape",
+    "puppeteer",
+    "sitemap"
+  ],
+  "author": "Nullish",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nullish/sitemuppet/issues"
+  },
+  "homepage": "https://github.com/nullish/sitemuppet#readme",
+  "dependencies": {
+    "puppeteer": "^2.1.1",
+    "xml2json": "^0.12.0"
+  }
+}
