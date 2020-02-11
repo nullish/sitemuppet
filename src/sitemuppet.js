@@ -6,6 +6,7 @@
 
  const puppeteer = require('puppeteer')
  fs = require('fs');
+ const argv = yargs
  var parser = require('xml2json');
 
  const sitemuppet = async (args...) => {
