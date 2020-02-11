@@ -37,7 +37,7 @@ const argv = yargs
     })
   .option('querys', {
       alias: 'q',
-      default: '//img[1]',
+      default: "(//div[@class='flex-video']/iframe)[1]",
       describe: 'XML selector for element to capture',
       type: 'string'
     }) 
@@ -67,7 +67,6 @@ const attrb = argv.attrb;
   */
 
 // read sitemap xml file
-console.log(`ATTR: ${attrb}`)
 const xmlSiteMap = fs.readFileSync(sitemap)
   // convert sitemap to json for easier javascript parsing
   const jsonSiteMap = parser.toJson(xmlSiteMap)
