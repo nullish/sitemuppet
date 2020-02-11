@@ -57,14 +57,6 @@ const querys = argv.querys;
 const attrb = argv.attrb;
 
   const sitemuppet = async (parallel, sitemap, timeout, waitfor, querys, attrb) => {
-  /* args
-  parallel
-  sitemap xml filepath
-  default timeout
-  element to wait for 
-  xpath query selector
-  html attribute
-  */
 
 // read sitemap xml file
 const xmlSiteMap = fs.readFileSync(sitemap)
@@ -81,9 +73,9 @@ const xmlSiteMap = fs.readFileSync(sitemap)
 
   const parallelBatches = Math.ceil(arrPages.length / parallel)
 
-  console.log('Scraping ' + arrPages.length + ' pages for video carousel components, in batches of ' + parallel)
+  console.log(`Scraping ${arrPages.length} pages for '${querys}' elements, in batches of ${parallel}`)
 
-  console.log(' This will result in ' + parallelBatches + ' batches.')
+  console.log(`This will result in ${parallelBatches} batches.`)
   console.log('"timestamp","batch","index","URL","attribute","Error"')
 
   // Split up the Array of arrPages
@@ -119,6 +111,7 @@ const xmlSiteMap = fs.readFileSync(sitemap)
               let txtOut = await page.evaluate((el,a) => el.getAttribute(a), elHandle[0], attrb);
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`)
             } else {
+              // response if element not fiund on page
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","","ELEMENT NOT FOUND"`)
             }
           } catch (err) {
