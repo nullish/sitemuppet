@@ -6,21 +6,11 @@
 
  const puppeteer = require('puppeteer')
  fs = require('fs');
- const argv = yargs
+ const yargs = require('yargs')
  var parser = require('xml2json');
 
- const sitemuppet = async (args...) => {
-  /* args
-  parallel
-  sitemap xml filepath
-  default timeout
-  element to wait for 
-  xpath query selector
-  html attribute
-  */
-
 // Command line arguments from yargs
-
+const argv = yargs
   .option('parallel', {
       alias: 'p',
       default: 8,
@@ -29,7 +19,7 @@
     })
   .option('sitemap', {
       alias: 'x',
-      default: './sitemap.xml'
+      default: './sitemap.xml',
       describe: 'File path to XML sitemap',
       type: 'string'
     })
@@ -51,19 +41,34 @@
       describe: 'XML selector for element to capture',
       type: 'string'
     }) 
-    .option('attr', {
+    .option('attrb', {
         alias: 'a',
-        default: 'src',
+        default: 'href',
         describe: 'HTML attribute value to report',
         type: 'string'
       })
     .argv;
 
-// Set up default argument values where not specified.
+const parallel = argv.parallel;
+const sitemap = argv.sitemap;
+const timeout = argv.timeout;
+const waitfor = argv.waitfor;
+const querys = argv.querys;
+const attrb = argv.attrb;
 
+  const sitemuppet = async (parallel, sitemap, timeout, waitfor, querys, attrb) => {
+  /* args
+  parallel
+  sitemap xml filepath
+  default timeout
+  element to wait for 
+  xpath query selector
+  html attribute
+  */
 
 // read sitemap xml file
-const xmlSiteMap = fs.readFileSync(argv.sitemap)
+console.log(`ATTR: ${attrb}`)
+const xmlSiteMap = fs.readFileSync(sitemap)
   // convert sitemap to json for easier javascript parsing
   const jsonSiteMap = parser.toJson(xmlSiteMap)
   const json = JSON.parse(jsonSiteMap)
@@ -75,9 +80,9 @@ const xmlSiteMap = fs.readFileSync(argv.sitemap)
     arrPages.push(e.loc)
   }
 
-  const parallelBatches = Math.ceil(arrPages.length / argv.parallel)
+  const parallelBatches = Math.ceil(arrPages.length / parallel)
 
-  console.log('Scraping ' + arrPages.length + ' pages for video carousel components, in batches of ' + argv.parallel)
+  console.log('Scraping ' + arrPages.length + ' pages for video carousel components, in batches of ' + parallel)
 
   console.log(' This will result in ' + parallelBatches + ' batches.')
   console.log('"timestamp","batch","index","URL","attribute","Error"')
@@ -102,17 +107,18 @@ const xmlSiteMap = fs.readFileSync(argv.sitemap)
         promises.push(browser.newPage().then(async page => {          
           try {
             // Set default navigation timeout.
-            await page.setDefaultNavigationTimeout(argv.timeout); 
+            await page.setDefaultNavigationTimeout(timeout); 
             // Goto page, wait for timeout as specified in JSON input
             await page.goto(arrPages[elem])
             // Element to wait for to confirm page load
-            await page.waitForXPath(argv.waitfor);
+            await page.waitForXPath(waitfor);
             // Get element to search for and report about
-            let elHandle = await page.$x(argv.querys);
+            let elHandle = await page.$x(querys);
             let timeStamp = new Date(Date.now()).toUTCString();
             // Get attribute value to report
             if (elHandle.length > 0) {
-              let txtOut = await page.evaluate(el => el.getAttribute(argv.attr), elHandle[0]);
+              let t = {"attrb": attrb};
+              let txtOut = await page.evaluate(el => el.getAttribute(attrb), elHandle[0]);
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`)
             } else {
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","","ELEMENT NOT FOUND"`)
@@ -132,4 +138,5 @@ const xmlSiteMap = fs.readFileSync(argv.sitemap)
   }
 }
 
-module.exports = sitemuppet;
+sitemuppet(parallel, sitemap, timeout, waitfor, querys, attrb)
+

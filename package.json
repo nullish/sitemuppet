@@ -2,7 +2,7 @@
   "name": "sitemuppet",
   "version": "1.0.1",
   "description": "Basic scraper to retrieve an HTML attribute from web pages, via sitemap.xml. Uses the Puppeteer node jS framework.",
-  "main": "index.js",
+  "main": "sitemuppet.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
