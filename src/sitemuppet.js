@@ -63,7 +63,7 @@
 
 
 // read sitemap xml file
-const xmlSiteMap = fs.readFileSync("./sitemap.xml")
+const xmlSiteMap = fs.readFileSync(argv.sitemap)
   // convert sitemap to json for easier javascript parsing
   const jsonSiteMap = parser.toJson(xmlSiteMap)
   const json = JSON.parse(jsonSiteMap)
@@ -75,9 +75,9 @@ const xmlSiteMap = fs.readFileSync("./sitemap.xml")
     arrPages.push(e.loc)
   }
 
-  const parallelBatches = Math.ceil(arrPages.length / parallel)
+  const parallelBatches = Math.ceil(arrPages.length / argv.parallel)
 
-  console.log('Scraping ' + arrPages.length + ' pages for video carousel components, in batches of ' + parallel)
+  console.log('Scraping ' + arrPages.length + ' pages for video carousel components, in batches of ' + argv.parallel)
 
   console.log(' This will result in ' + parallelBatches + ' batches.')
   console.log('"timestamp","batch","index","URL","attribute","Error"')
@@ -102,17 +102,17 @@ const xmlSiteMap = fs.readFileSync("./sitemap.xml")
         promises.push(browser.newPage().then(async page => {          
           try {
             // Set default navigation timeout.
-            await page.setDefaultNavigationTimeout(60000); 
+            await page.setDefaultNavigationTimeout(argv.timeout); 
             // Goto page, wait for timeout as specified in JSON input
             await page.goto(arrPages[elem])
             // Element to wait for to confirm page load
-            await page.waitForXPath("//title");
+            await page.waitForXPath(argv.waitfor);
             // Get element to search for and report about
-            let elHandle = await page.$x("(//div[@class='flex-video']/iframe)[1]");
+            let elHandle = await page.$x(argv.querys);
             let timeStamp = new Date(Date.now()).toUTCString();
             // Get attribute value to report
             if (elHandle.length > 0) {
-              let txtOut = await page.evaluate(el => el.getAttribute('src'), elHandle[0]);
+              let txtOut = await page.evaluate(el => el.getAttribute(argv.attr), elHandle[0]);
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`)
             } else {
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","","ELEMENT NOT FOUND"`)
