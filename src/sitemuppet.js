@@ -1,5 +1,5 @@
 /**
- * @name Sitemuppet,
+ * @name Sitemuppet
  *
  * @desc parallel scraping array of sitemap of pages to find user specified element attribute values
  */
