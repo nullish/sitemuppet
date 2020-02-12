@@ -11,43 +11,43 @@
 
 // Command line arguments from yargs
 const argv = yargs
-  .option('parallel', {
-      alias: 'p',
-      default: 8,
-      describe: 'Number of parallel instances',
-      type: 'number'
-    })
-  .option('sitemap', {
-      alias: 'x',
-      default: './sitemap.xml',
-      describe: 'File path to XML sitemap',
-      type: 'string'
-    })
-  .option('timeout', {
-      alias: 't',
-      default: 30000,
-      describe: 'Default timeout in milliseconds',
-      type: 'number'
-    })
-  .option('waitfor', {
-      alias: 'w',
-      default: '//title',
-      describe: 'XML selector for element to wait for',
-      type: 'string'
-    })
-  .option('querys', {
-      alias: 'q',
-      default: "(//div[@class='flex-video']/iframe)[1]",
-      describe: 'XML selector for element to capture',
-      type: 'string'
-    }) 
-    .option('attrb', {
-        alias: 'a',
-        default: 'src',
-        describe: 'HTML attribute value to report',
-        type: 'string'
-      })
-    .argv;
+.option('parallel', {
+  alias: 'p',
+  default: 8,
+  describe: 'Number of parallel instances',
+  type: 'number'
+})
+.option('sitemap', {
+  alias: 'x',
+  default: './sitemaps/sitemap.xml',
+  describe: 'File path to XML sitemap',
+  type: 'string'
+})
+.option('timeout', {
+  alias: 't',
+  default: 30000,
+  describe: 'Default timeout in milliseconds',
+  type: 'number'
+})
+.option('waitfor', {
+  alias: 'w',
+  default: '//title',
+  describe: 'XML selector for element to wait for',
+  type: 'string'
+})
+.option('querys', {
+  alias: 'q',
+  default: "(//div[@class='flex-video']/iframe)[1]",
+  describe: 'XML selector for element to capture',
+  type: 'string'
+}) 
+.option('attrb', {
+  alias: 'a',
+  default: 'src',
+  describe: 'HTML attribute value to report',
+  type: 'string'
+})
+.argv;
 
 const parallel = argv.parallel;
 const sitemap = argv.sitemap;
@@ -56,7 +56,7 @@ const waitfor = argv.waitfor;
 const querys = argv.querys;
 const attrb = argv.attrb;
 
-  const sitemuppet = async (parallel, sitemap, timeout, waitfor, querys, attrb) => {
+const sitemuppet = async (parallel, sitemap, timeout, waitfor, querys, attrb) => {
 
 // read sitemap xml file
 const xmlSiteMap = fs.readFileSync(sitemap)
@@ -108,8 +108,21 @@ const xmlSiteMap = fs.readFileSync(sitemap)
             let timeStamp = new Date(Date.now()).toUTCString();
             // Get attribute value to report
             if (elHandle.length > 0) {
-              let txtOut = await page.evaluate((el,a) => el.getAttribute(a), elHandle[0], attrb);
-              console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`)
+              let txtOut
+              // Get HTML or text value of element if specified. Otherwise get value specified by attribute.
+              switch (attrb) {
+                case "innerText":
+                txtOut = await page.evaluate((el) => el.innerText, elHandle[0]);
+                console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`);
+                break;
+                case "innerHTML":
+                txtOut = await page.evaluate((el) => el.innerHTML, elHandle[0]);
+                console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`);
+                break;
+                default:
+                txtOut = await page.evaluate((el,a) => el.getAttribute(a), elHandle[0], attrb);
+                console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","${txtOut}",""`)
+              }
             } else {
               // response if element not fiund on page
               console.log(`"${timeStamp}","${k}","${j}","${arrPages[elem]}","","ELEMENT NOT FOUND"`)
